@@ -67,6 +67,11 @@ export interface Account {
 	username: string;
 
 	/**
+	 * The email of the account
+	 */
+	email?: string;
+
+	/**
 	 * The type of the account
 	 */
 	oplvl: Type;
