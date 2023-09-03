@@ -7,7 +7,8 @@
 		"outDir": "dist",
 		"typeRoots": ["node_modules/@types"],
 		"esModuleInterop": true,
-		"noImplicitThis": true
+		"noImplicitThis": true,
+		"baseUrl": "src"
 	},
 	"files": ["src/index.ts"],
 	"include": ["src"],
