@@ -42,7 +42,6 @@
 		"@typescript-eslint/parser": "^5.59.6",
 		"esbuild": "^0.17.14",
 		"eslint": "^8.24.0",
-		"mime-types": "^2.1.35",
 		"prettier": "^2.7.1",
 		"typedoc": "^0.25.0",
 		"typescript": "^5.2.2"
