@@ -44,6 +44,7 @@ export enum Type {
 export interface Result {
 	id: string;
 	username: string;
+	email?: string,
 	oplvl: Type;
 	lastchange: string;
 	created: string;
@@ -51,6 +52,8 @@ export interface Result {
 	token?: string;
 	session?: string;
 }
+
+export type FullResult = Result & { email: string, password: string, token: string, session: string };
 
 /**
  * Represents an account
@@ -101,6 +104,8 @@ export interface Account {
 	 */
 	session?: string;
 }
+
+export type FullAccount = Account & { email: string, password: string, token: string, session: string };
 
 /**
  * Parses the account result of a response
