@@ -1,0 +1,50 @@
+{
+	"name": "@blankstorm/api",
+	"version": "0.0.1",
+	"description": "public Blankstorm API",
+	"main": "dist/api.js",
+	"types": "dist/types/index.d.ts",
+	"type": "module",
+	"files": [
+		"dist",
+		"src",
+		"license.md"
+	],
+	"scripts": {
+		"format:check": "prettier --check src",
+		"format:fix": "prettier --write src",
+		"format": "npm run format:check && npm run format:fix",
+		"lint": "eslint src && tsc --project tsconfig.json --noEmit",
+		"build": "node scripts/build.js",
+		"build:docs": "typedoc src/index.ts --includeVersion --readme readme.md --darkHighlightTheme monokai --lightHighlightTheme monokai",
+		"prepublishOnly": "npm run build -- -t"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/blankstorm/api.git"
+	},
+	"keywords": [
+		"blankstorm",
+		"api"
+	],
+	"author": "Dr. Vortex",
+	"license": "See license.md",
+	"bugs": {
+		"url": "https://github.com/blankstorm/api/issues"
+	},
+	"homepage": "https://blankstorm.net",
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.5.8",
+		"@typescript-eslint/eslint-plugin": "^5.59.6",
+		"@typescript-eslint/parser": "^5.59.6",
+		"esbuild": "^0.17.14",
+		"eslint": "^8.24.0",
+		"mime-types": "^2.1.35",
+		"prettier": "^2.7.1",
+		"typedoc": "^0.25.0",
+		"typescript": "^5.2.2"
+	}
+}

@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"lib": ["ESNext", "DOM"],
+		"module": "ESNext",
+		"target": "ES2015",
+		"declaration": true,
+		"outDir": "dist",
+		"typeRoots": ["node_modules/@types"],
+		"esModuleInterop": true,
+		"noImplicitThis": true
+	},
+	"files": ["src/index.ts"],
+	"include": ["src"],
+	"exclude": ["node_modules"]
+}
