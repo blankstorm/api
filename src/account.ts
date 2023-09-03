@@ -44,7 +44,7 @@ export enum Type {
 export interface Result {
 	id: string;
 	username: string;
-	email?: string,
+	email?: string;
 	oplvl: Type;
 	lastchange: string;
 	created: string;
@@ -53,7 +53,7 @@ export interface Result {
 	session?: string;
 }
 
-export type FullResult = Result & { email: string, password: string, token: string, session: string };
+export type FullResult = Result & { email: string; password: string; token: string; session: string };
 
 /**
  * Represents an account
@@ -105,14 +105,14 @@ export interface Account {
 	session?: string;
 }
 
-export type FullAccount = Account & { email: string, password: string, token: string, session: string };
+export type FullAccount = Account & { email: string; password: string; token: string; session: string };
 
 /**
  * Parses the account result of a response
  * @param result the response result
  * @returns the parsed result
  */
-function parseAccount(result: Result): Account {
+function parseAccount<A extends Account>(result: Result): A {
 	const parsed: Account = {
 		id: result?.id,
 		username: result?.username,
@@ -127,7 +127,7 @@ function parseAccount(result: Result): Account {
 	if ('session' in result) {
 		parsed.session = result.session;
 	}
-	return parsed;
+	return parsed as A;
 }
 
 /**
@@ -136,9 +136,9 @@ function parseAccount(result: Result): Account {
  * @param password the account's password
  * @returns The logged in account's data (includes the token)
  */
-export async function login(email: string, password: string): Promise<Account> {
+export async function login(email: string, password: string): Promise<Account & { token: string }> {
 	const result = await request<Result>('POST', 'account', { action: 'login', email, password });
-	return parseAccount(result);
+	return parseAccount<Account & { token: string }>(result);
 }
 
 /**
