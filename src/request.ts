@@ -1,7 +1,15 @@
 /**
  * The base API URL
  */
-export const URL = 'https://api.blankstorm.net';
+export let URL = 'https://api.blankstorm.net';
+
+/**
+ * Sets the API's URL
+ * @param value The new URL
+ */
+export function setURL(value: string) {
+	URL = value;
+}
 
 /**
  * A response to an API request
