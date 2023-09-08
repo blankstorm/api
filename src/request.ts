@@ -1,3 +1,5 @@
+import { authToken } from './auth';
+
 /**
  * The base API URL
  */
@@ -50,7 +52,7 @@ export async function request<R>(method: string, endpoint: string, data: object 
 	const res = await fetch(`${URL}/${endpoint}`, {
 		method,
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(data),
+		body: JSON.stringify({ ...data, auth: authToken }),
 	});
 	const response: Response<R> = await res.json();
 	if (response.error) {
