@@ -194,6 +194,12 @@ export async function info(key: string, value: string): Promise<Account> {
 	return parseAccount(result);
 }
 
+/**
+ * Gets a string describing the role of the account type
+ * @param type the acccount type
+ * @param short whether to use the short form or not
+ * @returns the role
+ */
 export function getRole(type: Type, short?: boolean): string {
 	switch (type) {
 		case Type.ACCOUNT:
@@ -209,6 +215,22 @@ export function getRole(type: Type, short?: boolean): string {
 		default:
 			return 'Unknown' + (short ? '' : ` (${type})`);
 	}
+}
+
+/**
+ * Strips private information (e.g. email, password hash, etc.) from an account
+ * @param account the account to strip info from
+ * @returns a new object without the stripped info
+ */
+export function stripInfo(account: FullAccount): Account {
+	return {
+		id: account.id,
+		username: account.username,
+		oplvl: account.oplvl,
+		lastchange: account.lastchange,
+		created: account.created,
+		disabled: account.disabled,
+	};
 }
 
 /**
