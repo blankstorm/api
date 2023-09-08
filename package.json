@@ -16,7 +16,7 @@
 		"lint": "eslint src && tsc --project tsconfig.json --noEmit",
 		"build": "node scripts/build.js",
 		"build:docs": "typedoc src/index.ts --includeVersion --readme readme.md --darkHighlightTheme monokai --lightHighlightTheme monokai",
-		"prepublishOnly": "npm run build -- -t"
+		"prepublishOnly": "npm run build"
 	},
 	"repository": {
 		"type": "git",

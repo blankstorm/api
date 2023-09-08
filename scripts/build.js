@@ -7,7 +7,6 @@ import path from 'node:path';
 const { values: options } = parseArgs({
 	options: {
 		watch: { short: 'w', type: 'boolean', default: false },
-		types: { short: 't', type: 'boolean', default: false },
 		preserve: { short: 'p', type: 'boolean', default: false },
 		out: { short: 'o', type: 'string', default: 'dist' }
 	},
@@ -32,9 +31,7 @@ const ctx = await context({
 					}
 				});
 				build.onEnd(() => {
-					if (options.types) {
-						execSync('npx tsc -p tsconfig.json --emitDeclarationOnly --outDir ' + options.out);
-					}
+					execSync('npx tsc -p tsconfig.json --outDir ' + options.out);
 				});
 			},
 		},
