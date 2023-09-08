@@ -189,7 +189,7 @@ export { _delete as delete };
  * @returns The account's data
  */
 export async function info(key: string, value: string): Promise<Account> {
-	checkValid(...[key, value] as KeyValue<FullAccount>);
+	checkValid(...([key, value] as KeyValue<FullAccount>));
 	const result = await request<Result>('GET', 'account', { action: 'get', [key]: value });
 	return parseAccount(result);
 }
@@ -261,7 +261,7 @@ export function checkValid(...[key, value]: KeyValue<FullAccount>): void {
  */
 export function isValid<KV extends KeyValue<FullAccount>>(...[key, value]: KV): boolean {
 	try {
-		checkValid(...[key, value] as KV);
+		checkValid(...([key, value] as KV));
 		return true;
 	} catch (e) {
 		return false;
