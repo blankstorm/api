@@ -1,5 +1,5 @@
 import { request } from './request';
-import type { KeyValue } from 'utils';
+import type { KeyValue } from './utils';
 
 /**
  * account actions
