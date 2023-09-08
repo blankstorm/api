@@ -198,13 +198,10 @@ export function getRole(type: Type, short?: boolean): string {
 	switch (type) {
 		case Type.ACCOUNT:
 			return 'User';
-		case Type.MOD:
 		case Type.MODERATOR:
 			return short ? 'Mod' : 'Moderator';
-		case Type.DEV:
 		case Type.DEVELOPER:
 			return short ? 'Dev' : 'Developer';
-		case Type.ADMIN:
 		case Type.ADMINISTRATOR:
 			return short ? 'Admin' : 'Administrator';
 		case Type.OWNER:
