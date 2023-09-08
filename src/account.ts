@@ -189,7 +189,7 @@ export { _delete as delete };
  * @returns The account's data
  */
 export async function info(key: string, value: string): Promise<Account> {
-	checkValid(...([key, value] as KeyValue<FullAccount>));
+	checkValid(key as keyof FullAccount, value);
 	const result = await request<Result>('GET', 'account', { action: 'get', [key]: value });
 	return parseAccount(result);
 }
@@ -214,34 +214,35 @@ export function getRole(type: Type, short?: boolean): string {
 /**
  * Checks if `value` is a valid `key`
  * @param key The attribute to check
- * @param value The value
+ * @param _value The value
  */
-export function checkValid(...[key, value]: KeyValue<FullAccount>): void {
-	switch (key) {
+export function checkValid<K extends keyof FullAccount>(key: K, value: FullAccount[K]): void {
+	const [_key, _value] = [key, value] as KeyValue<FullAccount>;
+	switch (_key) {
 		case 'id':
-			if (value.length != 32) throw new Error('Invalid ID length');
-			if (!/^[0-9a-f]+$/.test(value)) throw new Error('Invalid ID');
+			if (_value.length != 32) throw new Error('Invalid ID length');
+			if (!/^[0-9a-f]+$/.test(_value)) throw new Error('Invalid ID');
 			break;
 		case 'username':
-			if (value.length < 3 || value.length > 20) throw new Error('Usernames must be between 3 and 20 characters.');
-			if (!/^[_0-9a-zA-Z]+$/.test(value)) throw new Error('Usernames can only contain letters, numbers, and underscores');
+			if (_value.length < 3 || _value.length > 20) throw new Error('Usernames must be between 3 and 20 characters.');
+			if (!/^[_0-9a-zA-Z]+$/.test(_value)) throw new Error('Usernames can only contain letters, numbers, and underscores');
 			break;
 		case 'email':
-			if (!/^[\w.-]+@[\w-]+(\.\w{2,})+$/.test(value)) throw new Error('Invalid email');
+			if (!/^[\w.-]+@[\w-]+(\.\w{2,})+$/.test(_value)) throw new Error('Invalid email');
 			break;
 		case 'lastchange':
 		case 'created':
-			if (value.getTime() > Date.now()) {
+			if (_value.getTime() > Date.now()) {
 				throw new Error('Date is in the future');
 			}
 			break;
 		case 'token':
 		case 'session':
-			if (value.length != 64) throw new Error('Invalid token or session');
-			if (!/^[0-9a-f]+$/.test(value)) throw new Error('Invalid token or session');
+			if (_value.length != 64) throw new Error('Invalid token or session');
+			if (!/^[0-9a-f]+$/.test(_value)) throw new Error('Invalid token or session');
 			break;
 		case 'disabled':
-			if (![true, false, 1, 0, 'true', 'false'].some(v => v === value)) throw new Error('Invalid disabled value');
+			if (![true, false, 1, 0, 'true', 'false'].some(v => v === _value)) throw new Error('Invalid disabled value');
 			break;
 		case 'password':
 			break;
@@ -256,9 +257,9 @@ export function checkValid(...[key, value]: KeyValue<FullAccount>): void {
  * @param value The value
  * @returns whether the value is valid
  */
-export function isValid<KV extends KeyValue<FullAccount>>(...[key, value]: KV): boolean {
+export function isValid<K extends keyof FullAccount>(key: K, value: FullAccount[K]): boolean {
 	try {
-		checkValid(...([key, value] as KV));
+		checkValid(key, value);
 		return true;
 	} catch (e) {
 		return false;
