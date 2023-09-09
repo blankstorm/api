@@ -1,6 +1,6 @@
 {
 	"name": "@blankstorm/api",
-	"version": "0.0.16",
+	"version": "0.0.17",
 	"description": "public Blankstorm API",
 	"main": "dist/api.js",
 	"types": "dist/index.d.ts",
