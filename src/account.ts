@@ -197,7 +197,7 @@ export async function info(key: string, value: string): Promise<Account> {
 /**
  * The roles of account types
  */
-export const roles: { [key in Type]: string } = ['User', 'Moderator', 'Developer', 'Administrator', 'Owner'];
+export const roles: { [key in Type]: string } & string[] = ['User', 'Moderator', 'Developer', 'Administrator', 'Owner'];
 
 /**
  * Gets a string describing the role of the account type
