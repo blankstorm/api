@@ -195,6 +195,11 @@ export async function info(key: string, value: string): Promise<Account> {
 }
 
 /**
+ * The roles of account types
+ */
+export const roles: { [key in Type]: string } = ['User', 'Moderator', 'Developer', 'Administrator', 'Owner'];
+
+/**
  * Gets a string describing the role of the account type
  * @param type the acccount type
  * @param short whether to use the short form or not
@@ -203,15 +208,15 @@ export async function info(key: string, value: string): Promise<Account> {
 export function getRole(type: Type, short?: boolean): string {
 	switch (type) {
 		case Type.ACCOUNT:
-			return 'User';
+			return roles[0];
 		case Type.MODERATOR:
-			return short ? 'Mod' : 'Moderator';
+			return short ? 'Mod' : roles[1];
 		case Type.DEVELOPER:
-			return short ? 'Dev' : 'Developer';
+			return short ? 'Dev' : roles[2];
 		case Type.ADMINISTRATOR:
-			return short ? 'Admin' : 'Administrator';
+			return short ? 'Admin' : roles[3];
 		case Type.OWNER:
-			return 'Owner';
+			return roles[4];
 		default:
 			return 'Unknown' + (short ? '' : ` (${type})`);
 	}
