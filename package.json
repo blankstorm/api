@@ -4,6 +4,16 @@
 	"description": "public Blankstorm API",
 	"main": "dist/api.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/api.js"
+		},
+		"./*": {
+			"types": "./dist/*",
+			"default": "./dist/*"
+		}
+	},
 	"type": "module",
 	"files": [
 		"dist",

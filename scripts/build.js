@@ -1,16 +1,34 @@
 import { context } from 'esbuild';
 import { parseArgs } from 'node:util';
 import { execSync } from 'node:child_process';
-import { rmSync } from 'node:fs';
+import { rmSync, readdirSync, readFileSync, writeFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 const { values: options } = parseArgs({
 	options: {
 		watch: { short: 'w', type: 'boolean', default: false },
 		preserve: { short: 'p', type: 'boolean', default: false },
-		out: { short: 'o', type: 'string', default: 'dist' }
+		out: { short: 'o', type: 'string', default: 'dist' },
 	},
 });
+
+function updateImports(filePath) {
+	const content = readFileSync(filePath, 'utf-8');
+	const updatedContent = content.replace(/(\s*import\s+[^'"]+\s+from\s+['"])([^'"]+)(['"])/g, '$1$2.js$3');
+	writeFileSync(filePath, updatedContent);
+}
+
+// Function to recursively update imports in a directory
+function updateImportsInDirectory(directory) {
+	for(const file of readdirSync(directory)){
+		const filePath = path.join(directory, file);
+		if (statSync(filePath).isFile() && filePath.endsWith('.js')) {
+			updateImports(filePath);
+		} else if (statSync(filePath).isDirectory()) {
+			updateImportsInDirectory(filePath);
+		}
+	}
+}
 
 const ctx = await context({
 	entryPoints: ['src/index.ts'],
@@ -26,12 +44,17 @@ const ctx = await context({
 			name: 'types',
 			setup(build) {
 				build.onStart(() => {
-					if(!options.preserve) {
+					if (!options.preserve) {
 						rmSync(options.out, { force: true, recursive: true });
 					}
 				});
 				build.onEnd(() => {
-					execSync('npx tsc -p tsconfig.json --outDir ' + options.out);
+					try {
+						execSync('npx tsc -p tsconfig.json --outDir ' + options.out);
+						updateImportsInDirectory(options.out);
+					} catch (error) {
+						console.error(error);
+					}
 				});
 			},
 		},
