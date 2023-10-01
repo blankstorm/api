@@ -140,7 +140,7 @@ function parseAccount<A extends Account>(result: Result): A {
 export async function login(email: string, password: string): Promise<Account & { token: string }> {
 	checkValid('email', email);
 	checkValid('password', password);
-	const result = await request<Result>('POST', 'account', { action: 'login', email, password });
+	const result = await request<Result>('POST', 'user', { action: 'login', email, password });
 	return parseAccount<Account & { token: string }>(result);
 }
 
@@ -152,7 +152,7 @@ export async function login(email: string, password: string): Promise<Account & 
  */
 export async function logout(id: string, reason?: string): Promise<Account> {
 	checkValid('id', id);
-	const result = await request<Result>('POST', 'account', { action: 'logout', id, reason });
+	const result = await request<Result>('POST', 'user', { action: 'logout', id, reason });
 	return parseAccount(result);
 }
 
@@ -167,7 +167,7 @@ export async function create(email: string, username: string, password: string):
 	checkValid('email', email);
 	checkValid('username', username);
 	checkValid('password', password);
-	const result = await request<Result>('POST', 'account', { action: 'create', email, username, password });
+	const result = await request<Result>('POST', 'user', { action: 'create', email, username, password });
 	return parseAccount(result);
 }
 
@@ -177,7 +177,7 @@ export async function create(email: string, username: string, password: string):
  */
 async function _delete(id: string): Promise<void> {
 	checkValid('id', id);
-	await request<void>('POST', 'account', { action: 'delete', id });
+	await request<void>('POST', 'user', { action: 'delete', id });
 	return;
 }
 export { _delete as delete };
@@ -190,7 +190,7 @@ export { _delete as delete };
  */
 export async function info(key: string, value: string): Promise<Account> {
 	checkValid(key as keyof FullAccount, value);
-	const result = await request<Result>('GET', 'account', { action: 'get', [key]: value });
+	const result = await request<Result>('GET', 'user', { action: 'get', [key]: value });
 	return parseAccount(result);
 }
 
