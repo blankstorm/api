@@ -1,6 +1,6 @@
 {
 	"name": "@blankstorm/api",
-	"version": "0.0.20",
+	"version": "0.0.20-drvortex.dev",
 	"description": "public Blankstorm API",
 	"main": "dist/api.js",
 	"types": "dist/index.d.ts",

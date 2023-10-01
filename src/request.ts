@@ -3,7 +3,7 @@ import { authToken } from './auth';
 /**
  * The base API URL
  */
-export let URL = 'https://api.blankstorm.net';
+export let URL = 'https://api.drvortex.dev';
 
 /**
  * Sets the API's URL
