@@ -1,3 +1,3 @@
-export { auth } from './auth';
-export * from './account';
-export * from './request';
+export { auth } from './auth.js';
+export * from './account.js';
+export * from './request.js';

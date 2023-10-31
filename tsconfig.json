@@ -1,11 +1,12 @@
 {
 	"compilerOptions": {
 		"lib": ["ESNext", "DOM"],
-		"module": "ESNext",
-		"target": "ES2015",
+		"module": "NodeNext",
+		"target": "ES2017",
 		"declaration": true,
 		"outDir": "dist",
 		"typeRoots": ["node_modules/@types"],
+		"moduleResolution": "NodeNext",
 		"esModuleInterop": true,
 		"noImplicitThis": true,
 		"baseUrl": "src"

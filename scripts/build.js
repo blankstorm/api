@@ -1,7 +1,7 @@
 import { context } from 'esbuild';
 import { parseArgs } from 'node:util';
 import { execSync } from 'node:child_process';
-import { rmSync, readdirSync, readFileSync, writeFileSync, statSync } from 'node:fs';
+import { rmSync } from 'node:fs';
 import path from 'node:path';
 
 const { values: options } = parseArgs({
@@ -12,27 +12,9 @@ const { values: options } = parseArgs({
 	},
 });
 
-function updateImports(filePath) {
-	const content = readFileSync(filePath, 'utf-8');
-	const updatedContent = content.replace(/(\s*import\s+[^'"]+\s+from\s+['"])([^'"]+)(['"])/g, '$1$2.js$3');
-	writeFileSync(filePath, updatedContent);
-}
-
-// Function to recursively update imports in a directory
-function updateImportsInDirectory(directory) {
-	for(const file of readdirSync(directory)){
-		const filePath = path.join(directory, file);
-		if (statSync(filePath).isFile() && filePath.endsWith('.js')) {
-			updateImports(filePath);
-		} else if (statSync(filePath).isDirectory()) {
-			updateImportsInDirectory(filePath);
-		}
-	}
-}
-
 const ctx = await context({
 	entryPoints: ['src/index.ts'],
-	outfile: path.join(options.out, 'api.js'),
+	outfile: path.join(options.out, 'api.min.js'),
 	format: 'esm',
 	platform: 'neutral',
 	keepNames: true,
@@ -51,7 +33,6 @@ const ctx = await context({
 				build.onEnd(() => {
 					try {
 						execSync('npx tsc -p tsconfig.json --outDir ' + options.out);
-						updateImportsInDirectory(options.out);
 					} catch (error) {
 						console.error(error);
 					}

@@ -1,5 +1,5 @@
-import { request } from './request';
-import type { KeyValue } from './utils';
+import { request } from './request.js';
+import type { KeyValue } from './utils.js';
 
 const account_endpoint = 'account';
 

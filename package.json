@@ -2,16 +2,20 @@
 	"name": "@blankstorm/api",
 	"version": "0.0.20",
 	"description": "public Blankstorm API",
-	"main": "dist/api.js",
+	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"default": "./dist/api.js"
+			"default": "./dist/index.js"
 		},
-		"./*": {
-			"types": "./dist/*",
-			"default": "./dist/*"
+		"./*": "./dist/*"
+	},
+	"typesVersions": {
+		"*": {
+			"*": [
+				"./dist/*"
+			]
 		}
 	},
 	"type": "module",

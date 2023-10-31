@@ -1,4 +1,4 @@
-import { authToken } from './auth';
+import { authToken } from './auth.js';
 
 /**
  * The base API URL
