@@ -56,7 +56,16 @@ export interface AccountResult {
 	session?: string;
 }
 
-export type FullAccountResult = AccountResult & { email: string; password: string; token: string; session: string };
+/**
+ * The result object of a response representing an account with all data
+ * @see FullAccount
+ */
+export interface FullAccountResult extends AccountResult {
+	email: string;
+	password: string;
+	token: string;
+	session: string;
+}
 
 /**
  * Represents an account
@@ -108,7 +117,15 @@ export interface Account {
 	session?: string;
 }
 
-export type FullAccount = Account & { email: string; password: string; token: string; session: string };
+/**
+ * Represents an account with all data (i.e. sensitive information must be included)
+ */
+export interface FullAccount extends Account {
+	email: string;
+	password: string;
+	token: string;
+	session: string;
+}
 
 /**
  * Parses the account result of a response
@@ -208,19 +225,21 @@ export const accountRoles: { [key in AccountType]: string } & string[] = ['User'
  * @returns the role
  */
 export function getAccountRole(type: AccountType, short?: boolean): string {
+	if (typeof accountRoles[type] != 'string') {
+		return 'Unknown' + (short ? '' : ` (${type})`);
+	}
+	if (!short) {
+		return accountRoles[type];
+	}
 	switch (type) {
-		case AccountType.ACCOUNT:
-			return accountRoles[0];
 		case AccountType.MODERATOR:
-			return short ? 'Mod' : accountRoles[1];
+			return 'Mod';
 		case AccountType.DEVELOPER:
-			return short ? 'Dev' : accountRoles[2];
+			return 'Dev';
 		case AccountType.ADMINISTRATOR:
-			return short ? 'Admin' : accountRoles[3];
-		case AccountType.OWNER:
-			return accountRoles[4];
+			return 'Admin';
 		default:
-			return 'Unknown' + (short ? '' : ` (${type})`);
+			return accountRoles[type];
 	}
 }
 
