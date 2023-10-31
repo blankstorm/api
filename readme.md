@@ -13,13 +13,13 @@ npm install @blankstorm/api
 If you make any changes (e.g. changing an account's username or logging an account out), you will need to authenticate.
 
 ```ts
-import { auth, account } from '@blankstorm/api';
+import { auth, getAccountInfo, logout } from '@blankstorm/api';
 
 const authToken = 'your login token';
 
 auth(authToken);
 
-const { id } = await account.info('token', authToken);
+const { id } = await getAccountInfo('token', authToken);
 
-await account.logout(id);
+await logout(id);
 ```
