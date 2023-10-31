@@ -1,15 +1,17 @@
 import { request } from './request';
 import type { KeyValue } from './utils';
 
+const account_endpoint = 'account';
+
 /**
  * account actions
  */
-export type Action = 'get' | 'set' | 'create' | 'delete' | 'login' | 'logout';
+export type AccountAction = 'get' | 'set' | 'create' | 'delete' | 'login' | 'logout';
 
 /**
  * The account's level of access and status
  */
-export enum Type {
+export enum AccountType {
 	/**
 	 * Standard accounts
 	 */
@@ -42,11 +44,11 @@ export enum Type {
  * The result object of a response representing an account
  * @see Account
  */
-export interface Result {
+export interface AccountResult {
 	id: string;
 	username: string;
 	email?: string;
-	oplvl: Type;
+	oplvl: AccountType;
 	lastchange: string;
 	created: string;
 	disabled: boolean;
@@ -54,7 +56,7 @@ export interface Result {
 	session?: string;
 }
 
-export type FullResult = Result & { email: string; password: string; token: string; session: string };
+export type FullAccountResult = AccountResult & { email: string; password: string; token: string; session: string };
 
 /**
  * Represents an account
@@ -78,7 +80,7 @@ export interface Account {
 	/**
 	 * The type of the account
 	 */
-	oplvl: Type;
+	oplvl: AccountType;
 
 	/**
 	 * The last time the account's username was changed
@@ -113,7 +115,7 @@ export type FullAccount = Account & { email: string; password: string; token: st
  * @param result the response result
  * @returns the parsed result
  */
-function parseAccount<A extends Account>(result: Result): A {
+function parseAccount<A extends Account>(result: AccountResult): A {
 	const parsed: Account = {
 		id: result?.id,
 		username: result?.username,
@@ -138,9 +140,9 @@ function parseAccount<A extends Account>(result: Result): A {
  * @returns The logged in account's data (includes the token)
  */
 export async function login(email: string, password: string): Promise<Account & { token: string }> {
-	checkValid('email', email);
-	checkValid('password', password);
-	const result = await request<Result>('POST', 'account', { action: 'login', email, password });
+	checkAccountAttribute('email', email);
+	checkAccountAttribute('password', password);
+	const result = await request<AccountResult>('POST', account_endpoint, { action: 'login', email, password });
 	return parseAccount<Account & { token: string }>(result);
 }
 
@@ -151,8 +153,8 @@ export async function login(email: string, password: string): Promise<Account & 
  * @returns The logged out accounts data
  */
 export async function logout(id: string, reason?: string): Promise<Account> {
-	checkValid('id', id);
-	const result = await request<Result>('POST', 'account', { action: 'logout', id, reason });
+	checkAccountAttribute('id', id);
+	const result = await request<AccountResult>('POST', account_endpoint, { action: 'logout', id, reason });
 	return parseAccount(result);
 }
 
@@ -163,11 +165,11 @@ export async function logout(id: string, reason?: string): Promise<Account> {
  * @param password the account's password
  * @returns The created account's data
  */
-export async function create(email: string, username: string, password: string): Promise<Account> {
-	checkValid('email', email);
-	checkValid('username', username);
-	checkValid('password', password);
-	const result = await request<Result>('POST', 'account', { action: 'create', email, username, password });
+export async function createAccount(email: string, username: string, password: string): Promise<Account> {
+	checkAccountAttribute('email', email);
+	checkAccountAttribute('username', username);
+	checkAccountAttribute('password', password);
+	const result = await request<AccountResult>('POST', account_endpoint, { action: 'create', email, username, password });
 	return parseAccount(result);
 }
 
@@ -176,11 +178,11 @@ export async function create(email: string, username: string, password: string):
  * @param id the ID of the account to delete
  */
 async function _delete(id: string): Promise<void> {
-	checkValid('id', id);
-	await request<void>('POST', 'account', { action: 'delete', id });
+	checkAccountAttribute('id', id);
+	await request<void>('POST', account_endpoint, { action: 'delete', id });
 	return;
 }
-export { _delete as delete };
+export { _delete as deleteAccount };
 
 /**
  * Requests info about an account
@@ -188,16 +190,16 @@ export { _delete as delete };
  * @param value the value of the key (e.g. the account's id)
  * @returns The account's data
  */
-export async function info(key: string, value: string): Promise<Account> {
-	checkValid(key as keyof FullAccount, value);
-	const result = await request<Result>('GET', 'account', { action: 'get', [key]: value });
+export async function accountInfo(key: string, value: string): Promise<Account> {
+	checkAccountAttribute(key as keyof FullAccount, value);
+	const result = await request<AccountResult>('GET', account_endpoint, { action: 'get', [key]: value });
 	return parseAccount(result);
 }
 
 /**
  * The roles of account types
  */
-export const roles: { [key in Type]: string } & string[] = ['User', 'Moderator', 'Developer', 'Administrator', 'Owner'];
+export const accountRoles: { [key in AccountType]: string } & string[] = ['User', 'Moderator', 'Developer', 'Administrator', 'Owner'];
 
 /**
  * Gets a string describing the role of the account type
@@ -205,18 +207,18 @@ export const roles: { [key in Type]: string } & string[] = ['User', 'Moderator',
  * @param short whether to use the short form or not
  * @returns the role
  */
-export function getRole(type: Type, short?: boolean): string {
+export function getAccountRole(type: AccountType, short?: boolean): string {
 	switch (type) {
-		case Type.ACCOUNT:
-			return roles[0];
-		case Type.MODERATOR:
-			return short ? 'Mod' : roles[1];
-		case Type.DEVELOPER:
-			return short ? 'Dev' : roles[2];
-		case Type.ADMINISTRATOR:
-			return short ? 'Admin' : roles[3];
-		case Type.OWNER:
-			return roles[4];
+		case AccountType.ACCOUNT:
+			return accountRoles[0];
+		case AccountType.MODERATOR:
+			return short ? 'Mod' : accountRoles[1];
+		case AccountType.DEVELOPER:
+			return short ? 'Dev' : accountRoles[2];
+		case AccountType.ADMINISTRATOR:
+			return short ? 'Admin' : accountRoles[3];
+		case AccountType.OWNER:
+			return accountRoles[4];
 		default:
 			return 'Unknown' + (short ? '' : ` (${type})`);
 	}
@@ -227,7 +229,7 @@ export function getRole(type: Type, short?: boolean): string {
  * @param account the account to strip info from
  * @returns a new object without the stripped info
  */
-export function stripInfo(account: FullAccount): Account {
+export function stripAccountInfo(account: FullAccount): Account {
 	return {
 		id: account.id,
 		username: account.username,
@@ -243,7 +245,7 @@ export function stripInfo(account: FullAccount): Account {
  * @param key The attribute to check
  * @param _value The value
  */
-export function checkValid<K extends keyof FullAccount>(key: K, value: FullAccount[K]): void {
+export function checkAccountAttribute<K extends keyof FullAccount>(key: K, value: FullAccount[K]): void {
 	const [_key, _value] = [key, value] as KeyValue<FullAccount>;
 	switch (_key) {
 		case 'id':
@@ -284,9 +286,9 @@ export function checkValid<K extends keyof FullAccount>(key: K, value: FullAccou
  * @param value The value
  * @returns whether the value is valid
  */
-export function isValid<K extends keyof FullAccount>(key: K, value: FullAccount[K]): boolean {
+export function isValidAccountAttribute<K extends keyof FullAccount>(key: K, value: FullAccount[K]): boolean {
 	try {
-		checkValid(key, value);
+		checkAccountAttribute(key, value);
 		return true;
 	} catch (e) {
 		return false;
