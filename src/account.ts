@@ -194,12 +194,11 @@ export async function createAccount(email: string, username: string, password: s
  * Deletes an account (Requires authenication)
  * @param id the ID of the account to delete
  */
-async function _delete(id: string): Promise<void> {
+export async function deleteAccount(id: string, reason?: string): Promise<void> {
 	checkAccountAttribute('id', id);
-	await request<void>('POST', account_endpoint, { action: 'delete', id });
+	await request<void>('POST', account_endpoint, { action: 'delete', id, reason });
 	return;
 }
-export { _delete as deleteAccount };
 
 /**
  * Requests info about an account
