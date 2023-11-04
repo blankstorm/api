@@ -206,7 +206,7 @@ export async function deleteAccount(id: string, reason?: string): Promise<void> 
  * @param value the value of the key (e.g. the account's id)
  * @returns The account's data
  */
-export async function accountInfo(key: string, value: string): Promise<Account> {
+export async function getAccount(key: string, value: string): Promise<Account> {
 	checkAccountAttribute(key as keyof FullAccount, value);
 	const result = await request<AccountResult>('GET', account_endpoint, { action: 'get', [key]: value });
 	return parseAccount(result);
