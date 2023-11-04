@@ -247,7 +247,7 @@ export function getAccountRole(type: AccountType, short?: boolean): string {
  * @param account the account to strip info from
  * @returns a new object without the stripped info
  */
-export function stripAccountInfo(account: FullAccount): Account {
+export function stripAccountInfo(account: Account): Account {
 	return {
 		id: account.id,
 		username: account.username,
