@@ -1,8 +1,6 @@
 import { request } from './request.js';
 import type { KeyValue } from './utils.js';
 
-const account_endpoint = 'account';
-
 /**
  * account actions
  */
@@ -153,73 +151,6 @@ function parseAccount<A extends Account>(result: AccountResult): A {
 }
 
 /**
- * Logs an account in
- * @param email the account's email
- * @param password the account's password
- * @returns The logged in account's data (includes the token)
- */
-export async function login(email: string, password: string): Promise<Account & { token: string }> {
-	checkAccountAttribute('email', email);
-	checkAccountAttribute('password', password);
-	const result = await request<AccountResult>('POST', account_endpoint, { action: 'login', email, password });
-	return parseAccount<Account & { token: string }>(result);
-}
-
-/**
- * Logs an account out
- * @param token the account's login token
- * @param reason why the account is being logged out (Requires authenication)
- * @returns The logged out accounts data
- */
-export async function logout(id: string, reason?: string): Promise<Account> {
-	checkAccountAttribute('id', id);
-	const result = await request<AccountResult>('POST', account_endpoint, { action: 'logout', id, reason });
-	return parseAccount(result);
-}
-
-/**
- * Creates a new account
- * @param email the account's email
- * @param username the account's username
- * @param password the account's password
- * @returns The created account's data
- */
-export async function createAccount(email: string, username: string, password: string): Promise<Account> {
-	checkAccountAttribute('email', email);
-	checkAccountAttribute('username', username);
-	checkAccountAttribute('password', password);
-	const result = await request<AccountResult>('POST', account_endpoint, { action: 'create', email, username, password });
-	return parseAccount(result);
-}
-
-/**
- * Deletes an account (Requires authenication)
- * @param id the ID of the account to delete
- */
-export async function deleteAccount(id: string, reason?: string): Promise<void> {
-	checkAccountAttribute('id', id);
-	await request<void>('POST', account_endpoint, { action: 'delete', id, reason });
-	return;
-}
-
-/**
- * Gets info about an account
- * @param id the account's id
- * @param key the key to identify the account with (e.g. id)
- * @param value the value of the key (e.g. the account's id)
- * @returns The account's data
- */
-export async function getAccount(id: string): Promise<Account>;
-export async function getAccount(key: string, value?: string): Promise<Account> {
-	if (!(key in accountAttributes)) {
-		[key, value] = ['id', key];
-	}
-	checkAccountAttribute(key as keyof FullAccount, value);
-	const result = await request<AccountResult>('GET', account_endpoint, { action: 'get', [key]: value });
-	return parseAccount(result);
-}
-
-/**
  * The roles of account types
  */
 export const accountRoles: { [key in AccountType]: string } & string[] = ['User', 'Moderator', 'Developer', 'Administrator', 'Owner'];
@@ -318,4 +249,71 @@ export function isValidAccountAttribute<K extends keyof FullAccount>(key: K, val
 	} catch (e) {
 		return false;
 	}
+}
+
+/**
+ * Logs an account in
+ * @param email the account's email
+ * @param password the account's password
+ * @returns The logged in account's data (includes the token)
+ */
+export async function login(email: string, password: string): Promise<Account & { token: string }> {
+	checkAccountAttribute('email', email);
+	checkAccountAttribute('password', password);
+	const result = await request<AccountResult>('POST', 'account/login', { email, password });
+	return parseAccount<Account & { token: string }>(result);
+}
+
+/**
+ * Logs an account out
+ * @param token the account's login token
+ * @param reason why the account is being logged out (Requires authenication)
+ * @returns The logged out accounts data
+ */
+export async function logout(id: string, reason?: string): Promise<Account> {
+	checkAccountAttribute('id', id);
+	const result = await request<AccountResult>('POST', 'account/logout', { id, reason });
+	return parseAccount(result);
+}
+
+/**
+ * Creates a new account
+ * @param email the account's email
+ * @param username the account's username
+ * @param password the account's password
+ * @returns The created account's data
+ */
+export async function createAccount(email: string, username: string, password: string): Promise<Account> {
+	checkAccountAttribute('email', email);
+	checkAccountAttribute('username', username);
+	checkAccountAttribute('password', password);
+	const result = await request<AccountResult>('POST', 'account/create', { email, username, password });
+	return parseAccount(result);
+}
+
+/**
+ * Deletes an account (Requires authenication)
+ * @param id the ID of the account to delete
+ */
+export async function deleteAccount(id: string, reason?: string): Promise<void> {
+	checkAccountAttribute('id', id);
+	await request<void>('POST', 'account/delete', { id, reason });
+	return;
+}
+
+/**
+ * Gets info about an account
+ * @param id the account's id
+ * @param key the key to identify the account with (e.g. id)
+ * @param value the value of the key (e.g. the account's id)
+ * @returns The account's data
+ */
+export async function getAccount(id: string): Promise<Account>;
+export async function getAccount(key: string, value?: string): Promise<Account> {
+	if (!(key in accountAttributes)) {
+		[key, value] = ['id', key];
+	}
+	checkAccountAttribute(key as keyof FullAccount, value);
+	const result = await request<AccountResult>('GET', 'account/info', { action: 'get', [key]: value });
+	return parseAccount(result);
 }
