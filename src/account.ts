@@ -270,10 +270,9 @@ export async function login(email: string, password: string): Promise<Account & 
  * @param reason why the account is being logged out (Requires authenication)
  * @returns The logged out accounts data
  */
-export async function logout(id: string, reason?: string): Promise<Account> {
+export async function logout(id: string, reason?: string): Promise<boolean> {
 	checkAccountAttribute('id', id);
-	const result = await request<AccountResult>('POST', 'account/logout', { id, reason });
-	return parseAccount(result);
+	return await request<boolean>('POST', 'account/logout', { id, reason });
 }
 
 /**
