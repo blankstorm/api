@@ -211,7 +211,7 @@ export async function deleteAccount(id: string, reason?: string): Promise<void> 
  */
 export async function getAccount(id: string): Promise<Account>;
 export async function getAccount(key: string, value?: string): Promise<Account> {
-	if(!(key in accountAttributes)) {
+	if (!(key in accountAttributes)) {
 		[key, value] = ['id', key];
 	}
 	checkAccountAttribute(key as keyof FullAccount, value);
