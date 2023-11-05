@@ -8,6 +8,8 @@ const account_endpoint = 'account';
  */
 export type AccountAction = 'get' | 'set' | 'create' | 'delete' | 'login' | 'logout';
 
+export const accountAttributes = ['id', 'username', 'email', 'oplvl', 'lastchange', 'created', 'disabled', 'token', 'session'] as const;
+
 /**
  * The account's level of access and status
  */
@@ -201,12 +203,17 @@ export async function deleteAccount(id: string, reason?: string): Promise<void> 
 }
 
 /**
- * Requests info about an account
+ * Gets info about an account
+ * @param id the account's id
  * @param key the key to identify the account with (e.g. id)
  * @param value the value of the key (e.g. the account's id)
  * @returns The account's data
  */
-export async function getAccount(key: string, value: string): Promise<Account> {
+export async function getAccount(id: string): Promise<Account>;
+export async function getAccount(key: string, value?: string): Promise<Account> {
+	if(!(key in accountAttributes)) {
+		[key, value] = ['id', key];
+	}
 	checkAccountAttribute(key as keyof FullAccount, value);
 	const result = await request<AccountResult>('GET', account_endpoint, { action: 'get', [key]: value });
 	return parseAccount(result);
