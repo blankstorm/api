@@ -328,7 +328,7 @@ export async function getAccount(key: string, value?: string): Promise<Account> 
 		[key, value] = ['id', key];
 	}
 	checkAccountAttribute(key as keyof FullAccount, value);
-	const result = await request<AccountResult>('POST', 'account/info', { [key]: value, multiple: false });
+	const result = await request<AccountResult>('POST', 'account/info', { key, value, multiple: false });
 	return parseAccount(result);
 }
 
@@ -340,7 +340,7 @@ export async function getAccount(key: string, value?: string): Promise<Account> 
  */
 export async function getAccounts(key: string, value?: string): Promise<Account[]> {
 	checkAccountAttribute(key as keyof FullAccount, value);
-	const results = await request<AccountResult[]>('POST', 'account/info', { [key]: value, multiple: true });
+	const results = await request<AccountResult[]>('POST', 'account/info', { key, value, multiple: true });
 	return results.map(result => parseAccount(result));
 }
 
