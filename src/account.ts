@@ -186,7 +186,7 @@ export function getAccountRole(type: AccountType, short?: boolean): string {
  * @param account the account to strip info from
  * @returns a new object without the stripped info
  */
-export function stripAccountInfo(account: Account, access: Access): Account {
+export function stripAccountInfo(account: Account, access: Access = Access.PUBLIC): Account {
 	const info = {
 		id: account.id,
 		username: account.username,
