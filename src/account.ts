@@ -213,7 +213,7 @@ export function stripAccountInfo(account: Account, access: Access = Access.PUBLI
 /**
  * Checks if `value` is a valid `key`
  * @param key The attribute to check
- * @param _value The value
+ * @param value The value
  */
 export function checkAccountAttribute<K extends keyof FullAccount>(key: K, value: FullAccount[K]): void {
 	const [_key, _value] = [key, value] as KeyValue<FullAccount>;
@@ -322,13 +322,35 @@ export async function deleteAccount(id: string, reason?: string): Promise<void> 
  * @returns The account's data
  */
 export async function getAccount(id: string): Promise<Account>;
+export async function getAccount(key: string, value?: string): Promise<Account>;
 export async function getAccount(key: string, value?: string): Promise<Account> {
 	if (!(key in accountAttributes)) {
 		[key, value] = ['id', key];
 	}
 	checkAccountAttribute(key as keyof FullAccount, value);
-	const result = await request<AccountResult>('POST', 'account/info', { action: 'get', [key]: value });
+	const result = await request<AccountResult>('POST', 'account/info', { [key]: value, multiple: false });
 	return parseAccount(result);
+}
+
+/**
+ * Gets info about accounts (Requires authorization: Mod)
+ * @param key the key to identify accounts with (e.g. id)
+ * @param value the value of the key (e.g. the accounts role)
+ * @returns The accounts
+ */
+export async function getAccounts(key: string, value?: string): Promise<Account[]> {
+	checkAccountAttribute(key as keyof FullAccount, value);
+	const results = await request<AccountResult[]>('POST', 'account/info', { [key]: value, multiple: true });
+	return results.map(result => parseAccount(result));
+}
+
+/**
+ * Gets info about all account (Requires authorization: Mod)
+ * @returns The accounts
+ */
+export async function getAllAccounts(): Promise<Account[]> {
+	const results = await request<AccountResult[]>('POST', 'account/info', { multiple: true, all: true });
+	return results.map(result => parseAccount(result));
 }
 
 /**
