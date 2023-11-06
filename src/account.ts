@@ -1,4 +1,4 @@
-import { Access } from 'auth.js';
+import { Access } from './auth.js';
 import { request } from './request.js';
 import type { KeyValue } from './utils.js';
 
