@@ -313,6 +313,6 @@ export async function getAccount(key: string, value?: string): Promise<Account> 
 		[key, value] = ['id', key];
 	}
 	checkAccountAttribute(key as keyof FullAccount, value);
-	const result = await request<AccountResult>('GET', 'account/info', { action: 'get', [key]: value });
+	const result = await request<AccountResult>('POST', 'account/info', { action: 'get', [key]: value });
 	return parseAccount(result);
 }
