@@ -280,9 +280,9 @@ export async function login(email: string, password: string): Promise<Account & 
 
 /**
  * Logs an account out
- * @param token the account's login token
+ * @param id the account's id
  * @param reason why the account is being logged out (Requires authenication)
- * @returns The logged out accounts data
+ * @returns True when successful
  */
 export async function logout(id: string, reason?: string): Promise<boolean> {
 	checkAccountAttribute('id', id);
@@ -329,4 +329,41 @@ export async function getAccount(key: string, value?: string): Promise<Account> 
 	checkAccountAttribute(key as keyof FullAccount, value);
 	const result = await request<AccountResult>('POST', 'account/info', { action: 'get', [key]: value });
 	return parseAccount(result);
+}
+
+/**
+ * Updates an attribute of an account
+ * @param id the account's id
+ * @param key which attribute to update
+ * @param value the new value
+ * @param reason the reason for the change
+ * @returns the updated account data
+ */
+export async function update<K extends keyof FullAccount>(id: string, key: K, value: FullAccount[K], reason?: string): Promise<Account> {
+	checkAccountAttribute('id', id);
+	checkAccountAttribute(key, value);
+	const result = await request<AccountResult>('POST', 'account/update', { id, key, value, reason });
+	return parseAccount(result);
+}
+
+/**
+ * Disables an account
+ * @param id the account's id
+ * @param reason why the account is being disabled (Requires authenication)
+ * @returns True when successful
+ */
+export async function disable(id: string, reason?: string): Promise<boolean> {
+	const account = await update(id, 'disabled', true, reason);
+	return account.disabled;
+}
+
+/**
+ * Enables an account
+ * @param id the account's id
+ * @param reason why the account is being enabled (Requires authenication)
+ * @returns True when successful
+ */
+export async function enable(id: string, reason?: string): Promise<boolean> {
+	const account = await update(id, 'disabled', false, reason);
+	return !account.disabled;
 }
