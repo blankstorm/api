@@ -1,3 +1,4 @@
+import { Access } from 'auth.js';
 import { request } from './request.js';
 import type { KeyValue } from './utils.js';
 
@@ -185,8 +186,8 @@ export function getAccountRole(type: AccountType, short?: boolean): string {
  * @param account the account to strip info from
  * @returns a new object without the stripped info
  */
-export function stripAccountInfo(account: Account): Account {
-	return {
+export function stripAccountInfo(account: Account, access: Access): Account {
+	const info = {
 		id: account.id,
 		username: account.username,
 		oplvl: account.oplvl,
@@ -194,6 +195,19 @@ export function stripAccountInfo(account: Account): Account {
 		created: account.created,
 		disabled: account.disabled,
 	};
+	if (access == Access.PUBLIC) {
+		return info;
+	}
+	Object.assign(info, {
+		email: account.email,
+		token: account.token,
+		session: account.session,
+	});
+	if (access == Access.PROTECTED || access == Access.PRIVATE) {
+		return info;
+	}
+
+	throw new Error('Invalid access level: ' + access);
 }
 
 /**
