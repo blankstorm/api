@@ -346,7 +346,7 @@ export async function getAccount(key: string, value?: string): Promise<Account> 
  * @param value the value of the key (e.g. the accounts role)
  * @returns The accounts
  */
-export async function getAccounts(key: string, value?: string): Promise<Account[]> {
+export async function getAccounts(key: string, value?: string, offset = 0, limit = 1000): Promise<Account[]> {
 	checkAccountAttribute(key as keyof FullAccount, value);
 	const results = await request<AccountResult[]>('POST', 'account/info', { key, value, multiple: true });
 	return results.map(result => parseAccount(result));
@@ -356,8 +356,8 @@ export async function getAccounts(key: string, value?: string): Promise<Account[
  * Gets info about all account (Requires authorization: Mod)
  * @returns The accounts
  */
-export async function getAllAccounts(): Promise<Account[]> {
-	const results = await request<AccountResult[]>('POST', 'account/info', { multiple: true, all: true });
+export async function getAllAccounts(offset = 0, limit = 1000): Promise<Account[]> {
+	const results = await request<AccountResult[]>('POST', 'account/info', { multiple: true, all: true, offset, limit });
 	return results.map(result => parseAccount(result));
 }
 
