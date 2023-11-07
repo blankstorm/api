@@ -266,6 +266,14 @@ export function isValidAccountAttribute<K extends keyof FullAccount>(key: K, val
 }
 
 /**
+ * Gets the current number of accounts
+ */
+export async function getAccountNum(): Promise<number> {
+	const result = await request<number>('GET', 'account/num');
+	return result;
+}
+
+/**
  * Logs an account in
  * @param email the account's email
  * @param password the account's password
