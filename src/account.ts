@@ -113,7 +113,7 @@ export interface Account {
 
 	/**
 	 * The account's password hash.
-	 * 
+	 *
 	 * This is ***never*** sent by the server, it is only here for code convience when updating the password.
 	 */
 	password?: string;
