@@ -110,6 +110,13 @@ export interface Account {
 	 * The session token of the account
 	 */
 	session?: string;
+
+	/**
+	 * The account's password hash.
+	 * 
+	 * This is ***never*** sent by the server, it is only here for code convience when updating the password.
+	 */
+	password?: string;
 }
 
 /**
@@ -119,6 +126,7 @@ export interface FullAccount extends Account {
 	email: string;
 	token: string;
 	session: string;
+	password?: string;
 }
 
 /**
@@ -235,8 +243,10 @@ export function checkAccountAttribute<K extends keyof FullAccount>(key: K, value
 		case 'is_disabled':
 			if (![true, false, 1, 0, 'true', 'false'].some(v => v === _value)) throw new Error('Invalid disabled value');
 			break;
+		case 'password':
+			break;
 		default:
-			throw new TypeError(`"${key}" is not a user attribute`);
+			throw new TypeError(`"${key}" is not an account attribute`);
 	}
 }
 
