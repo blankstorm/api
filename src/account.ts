@@ -2,12 +2,7 @@ import { Access } from './auth.js';
 import { request } from './request.js';
 import type { KeyValue } from './utils.js';
 
-/**
- * account actions
- */
-export type AccountAction = 'get' | 'set' | 'create' | 'delete' | 'login' | 'logout';
-
-export const accountAttributes = ['id', 'username', 'email', 'oplvl', 'lastchange', 'created', 'disabled', 'token', 'session'] as const;
+export const accountAttributes = ['id', 'username', 'email', 'oplvl', 'lastchange', 'created', 'is_disabled', 'token', 'session'];
 
 /**
  * The account's level of access and status
@@ -63,7 +58,6 @@ export interface AccountResult {
  */
 export interface FullAccountResult extends AccountResult {
 	email: string;
-	password: string;
 	token: string;
 	session: string;
 }
@@ -123,7 +117,6 @@ export interface Account {
  */
 export interface FullAccount extends Account {
 	email: string;
-	password: string;
 	token: string;
 	session: string;
 }
@@ -142,11 +135,10 @@ function parseAccount<A extends Account>(result: AccountResult): A {
 		created: new Date(result?.created),
 		is_disabled: result?.is_disabled,
 	};
-	if ('token' in result) {
-		parsed.token = result.token;
-	}
-	if ('session' in result) {
-		parsed.session = result.session;
+	for(const maybe of ['token', 'session', 'email']) {
+		if(maybe in result) {
+			parsed[maybe] = result[maybe];
+		}
 	}
 	return parsed as A;
 }
@@ -243,8 +235,6 @@ export function checkAccountAttribute<K extends keyof FullAccount>(key: K, value
 		case 'is_disabled':
 			if (![true, false, 1, 0, 'true', 'false'].some(v => v === _value)) throw new Error('Invalid disabled value');
 			break;
-		case 'password':
-			break;
 		default:
 			throw new TypeError(`"${key}" is not a user attribute`);
 	}
@@ -281,7 +271,6 @@ export async function getAccountNum(): Promise<number> {
  */
 export async function login(email: string, password: string): Promise<Account & { token: string }> {
 	checkAccountAttribute('email', email);
-	checkAccountAttribute('password', password);
 	const result = await request<AccountResult>('POST', 'account/login', { email, password });
 	return parseAccount<Account & { token: string }>(result);
 }
@@ -307,7 +296,6 @@ export async function logout(id: string, reason?: string): Promise<boolean> {
 export async function createAccount(email: string, username: string, password: string): Promise<Account> {
 	checkAccountAttribute('email', email);
 	checkAccountAttribute('username', username);
-	checkAccountAttribute('password', password);
 	const result = await request<AccountResult>('POST', 'account/create', { email, username, password });
 	return parseAccount(result);
 }
@@ -330,9 +318,9 @@ export async function deleteAccount(id: string, reason?: string): Promise<void> 
  * @returns The account's data
  */
 export async function getAccount(id: string): Promise<Account>;
-export async function getAccount(key: string, value?: string): Promise<Account>;
+export async function getAccount(key: keyof Account, value?: string): Promise<Account>;
 export async function getAccount(key: string, value?: string): Promise<Account> {
-	if (!(key in accountAttributes)) {
+	if (!accountAttributes.includes(key)) {
 		[key, value] = ['id', key];
 	}
 	checkAccountAttribute(key as keyof FullAccount, value);
