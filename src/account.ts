@@ -135,8 +135,8 @@ function parseAccount<A extends Account>(result: AccountResult): A {
 		created: new Date(result?.created),
 		is_disabled: result?.is_disabled,
 	};
-	for(const maybe of ['token', 'session', 'email']) {
-		if(maybe in result) {
+	for (const maybe of ['token', 'session', 'email']) {
+		if (maybe in result) {
 			parsed[maybe] = result[maybe];
 		}
 	}
