@@ -52,7 +52,7 @@ export interface AccountResult {
 	oplvl: AccountType;
 	lastchange: string;
 	created: string;
-	disabled: boolean;
+	is_disabled: boolean;
 	token?: string;
 	session?: string;
 }
@@ -105,7 +105,7 @@ export interface Account {
 	/**
 	 * If the account is currently disabled
 	 */
-	disabled: boolean;
+	is_disabled: boolean;
 
 	/**
 	 * The login token of the account
@@ -140,7 +140,7 @@ function parseAccount<A extends Account>(result: AccountResult): A {
 		oplvl: result?.oplvl,
 		lastchange: new Date(result?.lastchange),
 		created: new Date(result?.created),
-		disabled: result?.disabled,
+		is_disabled: result?.is_disabled,
 	};
 	if ('token' in result) {
 		parsed.token = result.token;
@@ -193,7 +193,7 @@ export function stripAccountInfo(account: Account, access: Access = Access.PUBLI
 		oplvl: account.oplvl,
 		lastchange: account.lastchange,
 		created: account.created,
-		disabled: account.disabled,
+		is_disabled: account.is_disabled,
 	};
 	if (access == Access.PUBLIC) {
 		return info;
@@ -240,7 +240,7 @@ export function checkAccountAttribute<K extends keyof FullAccount>(key: K, value
 			if (_value.length != 64) throw new Error('Invalid token or session');
 			if (!/^[0-9a-f]+$/.test(_value)) throw new Error('Invalid token or session');
 			break;
-		case 'disabled':
+		case 'is_disabled':
 			if (![true, false, 1, 0, 'true', 'false'].some(v => v === _value)) throw new Error('Invalid disabled value');
 			break;
 		case 'password':
@@ -383,8 +383,8 @@ export async function update<K extends keyof FullAccount>(id: string, key: K, va
  * @returns True when successful
  */
 export async function disable(id: string, reason?: string): Promise<boolean> {
-	const account = await update(id, 'disabled', true, reason);
-	return account.disabled;
+	const account = await update(id, 'is_disabled', true, reason);
+	return account.is_disabled;
 }
 
 /**
@@ -394,6 +394,6 @@ export async function disable(id: string, reason?: string): Promise<boolean> {
  * @returns True when successful
  */
 export async function enable(id: string, reason?: string): Promise<boolean> {
-	const account = await update(id, 'disabled', false, reason);
-	return !account.disabled;
+	const account = await update(id, 'is_disabled', false, reason);
+	return !account.is_disabled;
 }
