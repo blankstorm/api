@@ -227,8 +227,8 @@ export function checkAccountAttribute<K extends keyof FullAccount>(key: K, value
 			if (!/^[_0-9a-zA-Z]+$/.test(_value)) throw new Error('Usernames can only contain letters, numbers, and underscores');
 			break;
 		case 'type':
-			if(typeof _value != 'number') throw new TypeError('Account type is not a number');
-			if(_value < AccountType.ACCOUNT || _value > AccountType.OWNER) throw new RangeError('Account type is not valid');
+			if (typeof _value != 'number') throw new TypeError('Account type is not a number');
+			if (_value < AccountType.ACCOUNT || _value > AccountType.OWNER) throw new RangeError('Account type is not valid');
 			break;
 		case 'email':
 			if (!/^[\w.-]+@[\w-]+(\.\w{2,})+$/.test(_value)) throw new Error('Invalid email');
