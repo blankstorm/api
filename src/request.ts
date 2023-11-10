@@ -1,17 +1,16 @@
 import { authToken } from './auth.js';
 
-/**
- * The base API URL
- */
-export let URL = 'https://api.blankstorm.net';
+export const config = {
+	/**
+	 * The base API URL
+	 */
+	url: 'https://api.blankstorm.net',
 
-/**
- * Sets the API's URL
- * @param value The new URL
- */
-export function setURL(value: string) {
-	URL = value;
-}
+	/**
+	 * Whether to throw an error on erroneous responses
+	 */
+	throw_errors: true,
+};
 
 /**
  * A response to an API request
@@ -49,13 +48,13 @@ export interface Response<Result> {
  * @returns a Promise which resolves to the result of the response
  */
 export async function request<R>(method: string, endpoint: string, data: object = {}): Promise<R> {
-	const res = await fetch(`${URL}/${endpoint}`, {
+	const res = await fetch(`${config.url}/${endpoint}`, {
 		method,
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ ...data, auth: authToken }),
 	});
 	const response: Response<R> = await res.json();
-	if (response.error) {
+	if (response.error && config.throw_errors) {
 		throw response.result;
 	}
 
