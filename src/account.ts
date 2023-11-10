@@ -2,7 +2,7 @@ import { Access } from './auth.js';
 import { request } from './request.js';
 import type { KeyValue } from './utils.js';
 
-export const accountAttributes = ['id', 'username', 'email', 'oplvl', 'lastchange', 'created', 'is_disabled', 'token', 'session'];
+export const accountAttributes = ['id', 'username', 'email', 'type', 'lastchange', 'created', 'is_disabled', 'token', 'session'];
 
 /**
  * The account's level of access and status
@@ -44,7 +44,7 @@ export interface AccountResult {
 	id: string;
 	username: string;
 	email?: string;
-	oplvl: AccountType;
+	type: AccountType;
 	lastchange: string;
 	created: string;
 	is_disabled: boolean;
@@ -84,7 +84,7 @@ export interface Account {
 	/**
 	 * The type of the account
 	 */
-	oplvl: AccountType;
+	type: AccountType;
 
 	/**
 	 * The last time the account's username was changed
@@ -138,7 +138,7 @@ function parseAccount<A extends Account>(result: AccountResult): A {
 	const parsed: Account = {
 		id: result?.id,
 		username: result?.username,
-		oplvl: result?.oplvl,
+		type: result?.type,
 		lastchange: new Date(result?.lastchange),
 		created: new Date(result?.created),
 		is_disabled: result?.is_disabled,
@@ -190,7 +190,7 @@ export function stripAccountInfo(account: Account, access: Access = Access.PUBLI
 	const info = {
 		id: account.id,
 		username: account.username,
-		oplvl: account.oplvl,
+		type: account.type,
 		lastchange: account.lastchange,
 		created: account.created,
 		is_disabled: account.is_disabled,
