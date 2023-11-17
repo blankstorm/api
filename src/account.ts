@@ -2,7 +2,9 @@ import { Access } from './auth.js';
 import { request } from './request.js';
 import type { KeyValue } from './utils.js';
 
-export const accountAttributes = ['id', 'username', 'email', 'type', 'lastchange', 'created', 'is_disabled', 'token', 'session'];
+export const uniqueAccountAttributes = ['id', 'username', 'email', 'token', 'session'];
+
+export const accountAttributes = [...uniqueAccountAttributes, 'type', 'lastchange', 'created', 'is_disabled'];
 
 /**
  * The account's level of access and status
@@ -128,6 +130,8 @@ export interface FullAccount extends Account {
 	session: string;
 	password?: string;
 }
+
+export type UniqueAccountKey = 'id' | 'email' | 'username' | 'token' | 'session';
 
 /**
  * Parses the account result of a response
@@ -329,16 +333,21 @@ export async function deleteAccount(id: string, reason?: string): Promise<void> 
  * @param id the account's id
  * @param key the key to identify the account with (e.g. id)
  * @param value the value of the key (e.g. the account's id)
+ * @param access which level of access
  * @returns The account's data
  */
-export async function getAccount(id: string): Promise<Account>;
-export async function getAccount(key: keyof Account, value?: string): Promise<Account>;
-export async function getAccount(key: string, value?: string): Promise<Account> {
+export async function getAccount(id: string, access?: Access): Promise<Account>;
+export async function getAccount(key: UniqueAccountKey, value?: string, access?: Access): Promise<Account>;
+export async function getAccount(key: string, value?: string | Access, access?: Access): Promise<Account> {
 	if (!accountAttributes.includes(key)) {
+		if(typeof value == 'number') {
+			access = value;
+		}
 		[key, value] = ['id', key];
 	}
-	checkAccountAttribute(key as keyof FullAccount, value);
-	const result = await request<AccountResult>('POST', 'account/info', { key, value, multiple: false });
+
+	checkAccountAttribute(key as UniqueAccountKey, value as string);
+	const result = await request<AccountResult>('POST', 'account/info', { key, value, access, multiple: false });
 	return parseAccount(result);
 }
 
