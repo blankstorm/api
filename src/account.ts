@@ -340,7 +340,7 @@ export async function getAccount(id: string, access?: Access): Promise<Account>;
 export async function getAccount(key: UniqueAccountKey, value?: string, access?: Access): Promise<Account>;
 export async function getAccount(key: string, value?: string | Access, access?: Access): Promise<Account> {
 	if (!accountAttributes.includes(key)) {
-		if(typeof value == 'number') {
+		if (typeof value == 'number') {
 			access = value;
 		}
 		[key, value] = ['id', key];
