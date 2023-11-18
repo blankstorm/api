@@ -48,11 +48,14 @@ export interface Response<Result> {
  * @returns a Promise which resolves to the result of the response
  */
 export async function request<R>(method: string, endpoint: string, data: object = {}): Promise<R> {
-	const res = await fetch(`${config.url}/${endpoint}`, {
+	const init: RequestInit = {
 		method,
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ ...data, auth: authToken }),
-	});
+	};
+	if (!['get', 'head'].includes(method.toLowerCase())) {
+		init.body = JSON.stringify({ ...data, auth: authToken });
+	}
+	const res = await fetch(`${config.url}/${endpoint}`, init);
 	const response: Response<R> = await res.json();
 	if (response.error && config.throw_errors) {
 		throw response.result;
