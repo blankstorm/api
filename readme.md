@@ -1,8 +1,8 @@
 # Blankstorm API
 
-This is the code for Blankstorm's REST API. 
+This is the code for Blankstorm's REST API.
 
-# @blankstorm/api
+### @blankstorm/api
 
 This is the client-side library. It provides typings and convience functions.
 
