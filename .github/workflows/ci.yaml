@@ -40,11 +40,8 @@ jobs:
             - name: Linting
               run: npm run lint
 
-            - name: Build frontend
+            - name: Build
               run: npm run build:frontend
-
-            - name: Build backend
-              run: npm run build:backend
 
     docs:
         needs: ci
