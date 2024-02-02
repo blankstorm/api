@@ -1,7 +1,7 @@
 import type { Request as CFRequest } from '@cloudflare/workers-types';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import { Access } from '../access';
 import { AccountType, type Account } from '../accounts';
+import { Access, type Response as APIResponse } from '../generic';
 import { getAccount } from './api';
 
 export async function parseBody<V extends Record<string, FormDataEntryValue>>(request: Request): Promise<V> {
@@ -22,7 +22,8 @@ export function response<R>(status: StatusCodes = StatusCodes.OK, result?: R, er
 	const headers = {
 		'Access-Control-Allow-Origin': '*',
 	};
-	return new Response(JSON.stringify({ status, statusText, result, error }), { status, statusText, headers });
+	const body: APIResponse<R> = { status, statusText, result, error };
+	return new Response(JSON.stringify(body), { status, statusText, headers });
 }
 
 export function error(status: StatusCodes = StatusCodes.INTERNAL_SERVER_ERROR, message?: string): Response {

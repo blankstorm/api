@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
-import { Access } from '../../src/access';
 import { AccountType, stripAccountInfo } from '../../src/accounts';
 import { getAccount, getAccounts, getAllAccounts, setDB } from '../../src/backend/api';
 import type { RequestContext } from '../../src/backend/context';
 import { checkAuth, checkBody, checkParams, error, response } from '../../src/backend/utils';
+import { Access } from '../../src/generic';
 
 export async function onRequest({ env, request }: RequestContext): Promise<Response> {
 	try {

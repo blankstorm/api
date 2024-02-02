@@ -1,3 +1,4 @@
+import type { Response } from '../generic.js';
 import { authToken } from './auth.js';
 
 export const config = {
@@ -11,34 +12,6 @@ export const config = {
 	 */
 	throw_errors: true,
 };
-
-/**
- * A response to an API request
- */
-export interface Response<Result> {
-	/**
-	 * The HTTP status of the response
-	 */
-	status: number;
-
-	/**
-	 * The HTTP status' text
-	 */
-	statusText: string;
-
-	/**
-	 * Whether the request failed (true) or not (false)
-	 */
-	error: boolean;
-
-	/**
-	 * The result of the request.
-	 *
-	 * @remarks
-	 * If the request fails, result will contain the error message
-	 */
-	result: Result;
-}
 
 /**
  * Makes a request to the API

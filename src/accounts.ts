@@ -1,4 +1,4 @@
-import { Access } from './access.js';
+import { Access } from './generic.js';
 import type { KeyValue } from './utils.js';
 
 export const uniqueAccountAttributes = ['id', 'username', 'email', 'token', 'session'];
