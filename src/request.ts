@@ -50,10 +50,13 @@ export interface Response<Result> {
 export async function request<R>(method: string, endpoint: string, data: object = {}): Promise<R> {
 	const init: RequestInit = {
 		method,
-		headers: { 'Content-Type': 'application/json' },
+		headers: {
+			Authorization: 'Bearer ' + authToken,
+			'Content-Type': 'application/json',
+		},
 	};
 	if (!['get', 'head'].includes(method.toLowerCase())) {
-		init.body = JSON.stringify({ ...data, auth: authToken });
+		init.body = JSON.stringify({ ...data });
 	}
 	const res = await fetch(`${config.url}/${endpoint}`, init);
 	const response: Response<R> = await res.json();
