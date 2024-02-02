@@ -38,3 +38,15 @@ export interface Response<Result> {
 	 */
 	result: Result;
 }
+
+export interface Metadata {
+	/**
+	 * Current API version
+	 */
+	version: string;
+
+	/**
+	 * Whether the API has debug features enabled
+	 */
+	debug: boolean;
+}

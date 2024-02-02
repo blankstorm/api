@@ -1,7 +1,10 @@
-import type { Account, AccountResult, FullAccount, UniqueAccountKey } from '../accounts.js';
-import { accountAttributes, checkAccountAttribute } from '../accounts.js';
-import { Access } from '../generic.js';
-import { request } from './request.js';
+/**
+ * Account-related endpoints
+ */
+import type { Account, AccountResult, FullAccount, UniqueAccountKey } from '../../accounts.js';
+import { accountAttributes, checkAccountAttribute } from '../../accounts.js';
+import { Access } from '../../generic.js';
+import { request } from '../request.js';
 
 /**
  * Parses the account result of a response
