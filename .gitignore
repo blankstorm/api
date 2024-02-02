@@ -1,7 +1,10 @@
 node_modules
 dist
+build
 docs
-
-#temporary
+.env*
+.wrangler
+*.log
+#temporaries
 tmp
 temp

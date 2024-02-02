@@ -1,8 +1,8 @@
 import { context } from 'esbuild';
-import { parseArgs } from 'node:util';
 import { execSync } from 'node:child_process';
 import { rmSync } from 'node:fs';
 import path from 'node:path';
+import { parseArgs } from 'node:util';
 
 const { values: options } = parseArgs({
 	options: {
@@ -13,7 +13,7 @@ const { values: options } = parseArgs({
 });
 
 const ctx = await context({
-	entryPoints: ['src/index.ts'],
+	entryPoints: ['src/frontend/index.ts'],
 	outfile: path.join(options.out, 'api.min.js'),
 	format: 'esm',
 	platform: 'neutral',
@@ -32,7 +32,7 @@ const ctx = await context({
 				});
 				build.onEnd(() => {
 					try {
-						execSync('npx tsc -p tsconfig.json --outDir ' + options.out);
+						execSync('npx tsc -p tsconfig-frontend.json --outDir ' + options.out);
 					} catch (error) {
 						console.error(error);
 					}

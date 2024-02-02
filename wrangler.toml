@@ -1,0 +1,7 @@
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "blankstorm"
+database_id = "b05c00ad-371b-425b-bd2f-1bdb6b3cb9b5"
+preview_database_id = "DB"

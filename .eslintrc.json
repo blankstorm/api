@@ -10,7 +10,7 @@
 	},
 	"overrides": [
 		{
-			"files": "scripts/*",
+			"files": "{scripts,functions}/*",
 			"env": {
 				"node": true
 			}
