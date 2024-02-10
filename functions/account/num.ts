@@ -3,6 +3,8 @@ import { getAccountNum, setDB } from '../../src/backend/api';
 import type { RequestContext } from '../../src/backend/context';
 import { error, response } from '../../src/backend/utils';
 
+export { onRequestOptions } from '../../src/backend/utils';
+
 export async function onRequest({ env }: RequestContext) {
 	try {
 		setDB(env.DB);

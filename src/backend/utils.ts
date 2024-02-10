@@ -1,4 +1,4 @@
-import type { Request as CFRequest } from '@cloudflare/workers-types';
+import type { Request as CFRequest, PagesFunction } from '@cloudflare/workers-types';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { AccountType, type Account } from '../accounts';
 import { Access, type Response as APIResponse } from '../generic';
@@ -137,4 +137,16 @@ export async function getAccountFromTokenOrID<const B extends { id?: string; tok
 	}
 
 	return targetUser;
+}
+
+export async function onRequestOptions() {
+	return new Response(null, {
+		status: 204,
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Headers': '*',
+			'Access-Control-Allow-Methods': '*',
+			'Access-Control-Max-Age': '86400',
+		},
+	});
 }

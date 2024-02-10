@@ -4,6 +4,8 @@ import { setAccountAttribute, setDB } from '../../src/backend/api';
 import type { RequestContext } from '../../src/backend/context';
 import { checkAuth, checkBody, error, getAccountFromTokenOrID, parseError, response } from '../../src/backend/utils';
 
+export { onRequestOptions } from '../../src/backend/utils';
+
 const requiredTypeForChange: { [K in keyof FullAccount]: AccountType } = {
 	...(Object.fromEntries(accountAttributes.map(k => [k, AccountType.MOD])) as { [K in keyof FullAccount]: AccountType.MOD }),
 	username: AccountType.DEV,

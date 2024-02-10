@@ -4,6 +4,8 @@ import { deleteAccount, setDB } from '../../src/backend/api';
 import type { RequestContext } from '../../src/backend/context';
 import { checkAuth, checkBody, error, getAccountFromTokenOrID, response } from '../../src/backend/utils';
 
+export { onRequestOptions } from '../../src/backend/utils';
+
 export async function onRequest({ env, request }: RequestContext): Promise<Response> {
 	try {
 		setDB(env.DB);
