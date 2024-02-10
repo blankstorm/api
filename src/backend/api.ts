@@ -126,13 +126,13 @@ export async function createAccount(username: string, email: string, rawPassword
 		throw new ReferenceError('User with id already exists');
 	}
 
-	await getDB().prepare('insert into accounts (id,username,email,password,type,created,lastchange) values (?,?,?,?,0,?,?)').bind(id, username, email, password, date, date).all();
+	await getDB().prepare('insert into accounts (id,username,email,password,type) values (?,?,?,?,0)').bind(id, username, email, password).all();
 
 	await sendMailToUser(
 		{ username, email },
 		'Welcome to Blankstorm',
 		`Thank you for joining Blankstorm! The game is still in development, so not all the features are completly finished.
-			Make sure you've joined <a href='https://bs.drvortex.dev/discord'>the discord</a> for the latest news!`
+			Make sure you've joined <a href='https://blankstorm.net/discord'>the discord</a> for the latest news!`
 	);
 
 	return {

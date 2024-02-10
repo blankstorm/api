@@ -206,6 +206,7 @@ export function checkAccountAttribute<K extends keyof FullAccount>(key: K, value
 		case 'username':
 			if (_value.length < 3 || _value.length > 20) throw new Error('Usernames must be between 3 and 20 characters.');
 			if (!/^[_0-9a-zA-Z]+$/.test(_value)) throw new Error('Usernames can only contain letters, numbers, and underscores');
+			if (['admin', 'administrator', 'owner', 'moderator', 'developer'].includes(_value.toLowerCase())) throw new Error('That username is not allowed');
 			break;
 		case 'type':
 			if (typeof _value != 'number') throw new TypeError('Account type is not a number');
