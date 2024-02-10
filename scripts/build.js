@@ -32,9 +32,9 @@ const ctx = await context({
 				});
 				build.onEnd(() => {
 					try {
-						execSync('npx tsc -p tsconfig-frontend.json --outDir ' + options.out);
+						execSync('npx tsc -p tsconfig-frontend.json --outDir ' + options.out, { stdio: 'inherit' });
 					} catch (error) {
-						console.error(error);
+						console.error(error.stack);
 					}
 				});
 			},
