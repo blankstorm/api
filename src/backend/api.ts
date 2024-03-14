@@ -19,9 +19,7 @@ export function getDB(): D1Database {
 }
 
 export function hash(text: string): string {
-	const _hash = createHash('sha256');
-	_hash.update(text);
-	return _hash.digest('hex');
+	return createHash('sha256').update(text).digest('hex');
 }
 
 export function sendMail(to: string, subject: string, contents: string) {
@@ -81,10 +79,14 @@ export async function setAccountAttribute(id: string, attr: string, value: strin
 	if (!user) {
 		return;
 	}
+	const date = new Date(Date.now());
 	switch (attr) {
+		
 		case 'username':
-			const date = new Date(Date.now());
-			getDB().prepare('update accounts set lastchange=? where id=?').bind(date, id).all();
+			await getDB().prepare('update accounts set lastchange=?,username=? where id=?').bind(date, value, id).all();
+			break;
+		case 'password':
+			await getDB().prepare('update accounts set password=? where id=?').bind(hash(value), id).run();
 			break;
 		case 'disabled':
 			await sendMailToUser(
