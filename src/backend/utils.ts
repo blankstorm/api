@@ -1,4 +1,4 @@
-import type { Request as CFRequest, PagesFunction } from '@cloudflare/workers-types';
+import type { Request as CFRequest } from '@cloudflare/workers-types';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { AccountType, type Account } from '../accounts';
 import { Access, type Response as APIResponse } from '../generic';
