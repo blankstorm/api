@@ -1,5 +1,4 @@
 import { createHash, randomBytes } from 'node:crypto';
-//import sgMail from '@sendgrid/mail';
 import { D1Database } from '@cloudflare/workers-types';
 import { StatusCodes } from 'http-status-codes';
 import { AccountType, checkAccountAttribute, isValidAccountAttribute, type Account, type FullAccount } from '../accounts';
@@ -22,14 +21,19 @@ export function hash(text: string): string {
 	return createHash('sha256').update(text).digest('hex');
 }
 
-export function sendMail(to: string, subject: string, contents: string) {
-	/*return sgMail.send({
-		from: 'Blankstorm <no-reply@blankstorm.net>',
-		to,
-		subject,
-		html: '<p style="font-family:sans-serif">' + contents.replaceAll('\n', '<br>') + '</p>',
-	});*/
-	//throw error(StatusCodes.SERVICE_UNAVAILABLE);
+export async function sendMail(to: string, subject: string, contents: string) {
+	await fetch('https://api.sendgrid.com/v3/mail/send', {
+		method: 'POST',
+		headers: {
+			Authorization: 'Bearer ' + process.env.sendgrid_api_key,
+		},
+		body: JSON.stringify({
+			from: 'Blankstorm <no-reply@blankstorm.net>',
+			to,
+			subject,
+			html: '<p style="font-family:sans-serif">' + contents.replaceAll('\n', '<br>') + '</p>',
+		}),
+	});
 }
 
 export function sendMailToUser({ username, email }: { username: string; email?: string }, subject: string, contents: string) {
@@ -42,10 +46,12 @@ export function sendMailToUser({ username, email }: { username: string; email?: 
 export async function getAccountNum(): Promise<number> {
 	return getDB().prepare('select count(1) as num from accounts').first<number>('num');
 }
+
 export async function getAccount(attr: string, value: string): Promise<FullAccount> {
 	const result = await getAccounts(attr, value, 0, 1);
 	return result[0];
 }
+
 export async function getAccounts(attr: string, value: string, offset = 0, limit = 1000): Promise<FullAccount[]> {
 	if (!value) {
 		return [];
@@ -56,6 +62,7 @@ export async function getAccounts(attr: string, value: string, offset = 0, limit
 	}
 	return results;
 }
+
 export async function getAllAccounts(offset = 0, limit = 1000): Promise<FullAccount[]> {
 	const { results } = await getDB().prepare('select * from accounts limit ?,?').bind(offset, limit).all<FullAccount>();
 	for (const result of results) {
@@ -63,6 +70,7 @@ export async function getAllAccounts(offset = 0, limit = 1000): Promise<FullAcco
 	}
 	return results;
 }
+
 export async function getAllAccountsWithMinType(type: AccountType = 4, offset = 0, limit = 1000): Promise<FullAccount[]> {
 	const { results } = await getDB().prepare('select * from accounts where type >= ? limit ?,?').bind(type, offset, limit).all<FullAccount>();
 	for (const result of results) {
@@ -70,6 +78,7 @@ export async function getAllAccountsWithMinType(type: AccountType = 4, offset = 
 	}
 	return results;
 }
+
 export async function setAccountAttribute(id: string, attr: string, value: string, reason?: string): Promise<void> {
 	if (!isValidAccountAttribute(attr as keyof FullAccount, value)) {
 		throw 'Invalid key or value';
@@ -81,11 +90,20 @@ export async function setAccountAttribute(id: string, attr: string, value: strin
 	}
 	const date = new Date(Date.now());
 	switch (attr) {
-		
 		case 'username':
+			await sendMailToUser(
+				user,
+				'Username changed',
+				'Your username has been changed. If this was not you, you should change your password and contact support@blankstorm.net.'
+			);
 			await getDB().prepare('update accounts set lastchange=?,username=? where id=?').bind(date, value, id).all();
 			break;
 		case 'password':
+			await sendMailToUser(
+				user,
+				'Password changed',
+				'Your password has been changed. If this was not you, you should change your password and contact support@blankstorm.net.'
+			);
 			await getDB().prepare('update accounts set password=? where id=?').bind(hash(value), id).run();
 			break;
 		case 'disabled':
@@ -99,7 +117,7 @@ export async function setAccountAttribute(id: string, attr: string, value: strin
 			await sendMailToUser(
 				user,
 				'Email changed',
-				`Your email has been changed to ${value}. If this was not you, you should change your password and contact support@drvortex.dev.`
+				`Your email has been changed to ${value}. If this was not you, you should change your password and contact support@blankstorm.net.`
 			);
 			break;
 	}
@@ -107,6 +125,7 @@ export async function setAccountAttribute(id: string, attr: string, value: strin
 	await getDB().prepare(`update accounts set ${attr}=? where id=?`).bind(value, id).run();
 	return;
 }
+
 export async function createAccount(username: string, email: string, rawPassword: string): Promise<Account> {
 	checkAccountAttribute('username', username);
 	checkAccountAttribute('email', email);
@@ -133,8 +152,7 @@ export async function createAccount(username: string, email: string, rawPassword
 	await sendMailToUser(
 		{ username, email },
 		'Welcome to Blankstorm',
-		`Thank you for joining Blankstorm! The game is still in development, so not all the features are completly finished.
-			Make sure you've joined <a href='https://blankstorm.net/discord'>the discord</a> for the latest news!`
+		`Thank you for joining Blankstorm! The game is still in development, so not all the features are completly finished.`
 	);
 
 	return {
@@ -147,10 +165,12 @@ export async function createAccount(username: string, email: string, rawPassword
 		lastchange: date,
 	};
 }
+
 export async function accountExists(id: string): Promise<boolean> {
 	const result = await getDB().prepare('select count(1) as num from accounts where id=?').bind(id).all();
 	return !!result[0].num;
 }
+
 export async function deleteAccount(id: string, reason?: string): Promise<FullAccount> {
 	if (!accountExists(id)) {
 		throw new ReferenceError('User does not exist');
@@ -162,19 +182,22 @@ export async function deleteAccount(id: string, reason?: string): Promise<FullAc
 		'Account deleted',
 		`Your account has been deleted.
 		Reason: ${reason || '<em>no reason provided</em>'}
-		If you have any concerns please reach out to support@drvortex.dev.`
+		If you have any concerns please reach out to support@blankstorm.net.`
 	);
 
 	return getDB().prepare('delete from accounts where id=?').bind(id).first();
 }
+
 export async function login(id: string): Promise<string> {
 	const token = randomBytes(32).toString('hex');
 	await getDB().prepare('update accounts set token=? where id=?').bind(token, id).first();
 	return token;
 }
+
 export function logout(id: string, reason?: string): Promise<boolean> {
 	return getDB().prepare('update accounts set token="" where id=?').bind(id).first();
 }
+
 export async function generateSession(id: string): Promise<string> {
 	const session = randomBytes(32).toString('hex');
 	await getDB().prepare('update accounts set session=? where id=?').bind(session, id).first();
