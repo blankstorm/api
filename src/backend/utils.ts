@@ -25,7 +25,7 @@ export function response<R>(status: StatusCodes = StatusCodes.OK, result?: R, er
 		status,
 		statusText,
 		headers: {
-			'Access-Control-Allow-Origin': '*',
+			'access-control-allow-origin': '*',
 			'content-type': 'application/json; charset=utf-8',
 		},
 	});
