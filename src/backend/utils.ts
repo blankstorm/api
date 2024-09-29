@@ -19,11 +19,16 @@ export async function parseBody<V extends Record<string, FormDataEntryValue>>(re
 
 export function response<R>(status: StatusCodes = StatusCodes.OK, result?: R, error = false): Response {
 	const statusText: ReasonPhrases = ReasonPhrases[StatusCodes[status] as keyof typeof ReasonPhrases];
-	const headers = {
-		'Access-Control-Allow-Origin': '*',
-	};
+
 	const body: APIResponse<R> = { status, statusText, result, error };
-	return new Response(JSON.stringify(body), { status, statusText, headers });
+	return new Response(JSON.stringify(body), {
+		status,
+		statusText,
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			'content-type': 'application/json; charset=utf-8'
+		},
+	});
 }
 
 export function error(status: StatusCodes = StatusCodes.INTERNAL_SERVER_ERROR, message?: string): Response {
