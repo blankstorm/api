@@ -53,7 +53,7 @@ export async function auth({
 	requiredType = AccountType.ACCOUNT,
 	target,
 	allowIfSame = false,
-	access = Access.PUBLIC,
+	access = Access.PROTECTED,
 	debug = false,
 }: AuthorizationOptions): Promise<Response> {
 	try {

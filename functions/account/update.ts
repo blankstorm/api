@@ -33,7 +33,6 @@ export async function onRequest({ env, request }: RequestContext): Promise<Respo
 			target,
 			allowIfSame: ['username', 'email'].includes(body.key),
 			requiredType: requiredTypeForChange[body.key],
-			access: Access.PROTECTED,
 		});
 
 		try {
