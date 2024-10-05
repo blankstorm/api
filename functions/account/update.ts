@@ -3,6 +3,7 @@ import { AccountType, accountAttributes, stripAccountInfo, type FullAccount } fr
 import { setAccountAttribute, setDB } from '../../src/backend/api';
 import type { RequestContext } from '../../src/backend/context';
 import { checkAuth, checkBody, error, getAccountFromTokenOrID, parseError, response } from '../../src/backend/utils';
+import { Access } from '../../src/generic';
 
 export { onRequestOptions } from '../../src/backend/utils';
 
@@ -32,6 +33,7 @@ export async function onRequest({ env, request }: RequestContext): Promise<Respo
 			target,
 			allowIfSame: ['username', 'email'].includes(body.key),
 			requiredType: requiredTypeForChange[body.key],
+			access: Access.PROTECTED,
 		});
 
 		try {
