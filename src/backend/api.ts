@@ -22,10 +22,13 @@ export function hash(text: string): string {
 }
 
 export async function sendMail(to: string, subject: string, contents: string) {
+	if (!globalThis.process) {
+		return;
+	}
 	await fetch('https://api.sendgrid.com/v3/mail/send', {
 		method: 'POST',
 		headers: {
-			Authorization: 'Bearer ' + process.env.sendgrid_api_key,
+			Authorization: 'Bearer ' + globalThis.process.env.sendgrid_api_key,
 		},
 		body: JSON.stringify({
 			from: 'Blankstorm <no-reply@blankstorm.net>',
