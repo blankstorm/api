@@ -9,7 +9,7 @@ export async function onRequest({ env }: RequestContext) {
 	try {
 		setDB(env.DB);
 		return response(StatusCodes.OK, await getAccountNum(), false);
-	} catch (e) {
+	} catch (e: any) {
 		console.error(e);
 		return error(StatusCodes.INTERNAL_SERVER_ERROR, env.DEBUG && e?.message);
 	}

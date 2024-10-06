@@ -11,7 +11,7 @@ export async function onRequest({ env }: RequestContext) {
 			debug: !!env.DEBUG,
 		};
 		return response(StatusCodes.OK, metadata, false);
-	} catch (e) {
+	} catch (e: any) {
 		console.error(e);
 		return error(StatusCodes.INTERNAL_SERVER_ERROR, env.DEBUG && e?.message);
 	}

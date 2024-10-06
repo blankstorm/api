@@ -23,12 +23,12 @@ export async function onRequest({ env, request }: RequestContext): Promise<Respo
 
 		try {
 			await logout(target.id, body.reason);
-		} catch (err) {
+		} catch (err: any) {
 			return parseError(err);
 		}
 
 		return response(StatusCodes.OK, true);
-	} catch (e) {
+	} catch (e: any) {
 		if (e instanceof Response) {
 			return e;
 		}

@@ -47,7 +47,7 @@ export function sendMailToUser({ username, email }: { username: string; email?: 
 }
 
 export async function getAccountNum(): Promise<number> {
-	return getDB().prepare('select count(1) as num from accounts').first<number>('num');
+	return (await getDB().prepare('select count(1) as num from accounts').first<number>('num'))!;
 }
 
 export async function getAccount(attr: string, value: string): Promise<FullAccount> {
@@ -170,8 +170,8 @@ export async function createAccount(username: string, email: string, rawPassword
 }
 
 export async function accountExists(id: string): Promise<boolean> {
-	const result = await getDB().prepare('select count(1) as num from accounts where id=?').bind(id).all();
-	return !!result[0].num;
+	const { results } = await getDB().prepare('select count(1) as num from accounts where id=?').bind(id).all();
+	return !!results[0].num;
 }
 
 export async function deleteAccount(id: string, reason?: string): Promise<FullAccount> {
@@ -188,7 +188,7 @@ export async function deleteAccount(id: string, reason?: string): Promise<FullAc
 		If you have any concerns please reach out to support@blankstorm.net.`
 	);
 
-	return getDB().prepare('delete from accounts where id=?').bind(id).first();
+	return (await getDB().prepare('delete from accounts where id=?').bind(id).first())!;
 }
 
 export async function login(id: string): Promise<string> {
@@ -197,8 +197,8 @@ export async function login(id: string): Promise<string> {
 	return token;
 }
 
-export function logout(id: string, reason?: string): Promise<boolean> {
-	return getDB().prepare('update accounts set token="" where id=?').bind(id).first();
+export async function logout(id: string, reason?: string): Promise<boolean> {
+	return (await getDB().prepare('update accounts set token="" where id=?').bind(id).first())!;
 }
 
 export async function generateSession(id: string): Promise<string> {

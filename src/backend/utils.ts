@@ -20,7 +20,7 @@ export async function parseBody<V extends Record<string, FormDataEntryValue>>(re
 export function response<R>(status: StatusCodes = StatusCodes.OK, result?: R, error = false): Response {
 	const statusText: ReasonPhrases = ReasonPhrases[StatusCodes[status] as keyof typeof ReasonPhrases];
 
-	const body: APIResponse<R> = { status, statusText, result, error };
+	const body: APIResponse<R | undefined> = { status, statusText, result, error };
 	return new Response(JSON.stringify(body), {
 		status,
 		statusText,
@@ -55,7 +55,7 @@ export async function auth({
 	allowIfSame = false,
 	access = Access.PROTECTED,
 	debug = false,
-}: AuthorizationOptions): Promise<Response> {
+}: AuthorizationOptions): Promise<Response | void> {
 	try {
 		if (access == Access.PUBLIC) {
 			return;
@@ -67,7 +67,7 @@ export async function auth({
 			if (!auth.headers.has('Authorization')) {
 				return error(StatusCodes.UNAUTHORIZED, 'Missing authorization header');
 			}
-			auth = auth.headers.get('Authorization');
+			auth = auth.headers.get('Authorization')!;
 		}
 		if (auth.startsWith('Bearer ')) {
 			auth = auth.substring(7);
@@ -82,10 +82,10 @@ export async function auth({
 			return error(StatusCodes.UNAUTHORIZED, 'Invalid auth token');
 		}
 
-		if (authUser.type < Math.max(requiredType, +target?.type + 1) && (target?.id != authUser.id || !allowIfSame) && access < Access.PUBLIC) {
+		if (authUser.type < Math.max(requiredType, (target?.type || 0) + 1) && (target?.id != authUser.id || !allowIfSame) && access < Access.PUBLIC) {
 			return error(StatusCodes.FORBIDDEN, 'Permission denied');
 		}
-	} catch (e) {
+	} catch (e: any) {
 		return error(StatusCodes.INTERNAL_SERVER_ERROR, 'Authorization failed' + (debug && ': ' + e.message));
 	}
 }
@@ -131,11 +131,11 @@ export async function checkBody<const B>(request: CFRequest, ...params: (keyof B
 }
 
 export async function getAccountFromTokenOrID<const B extends { id?: string; token?: string }>(body: B): Promise<Account> {
-	if (!(body.id || body.token)) {
+	if (!(body.token || body.id)) {
 		throw error(StatusCodes.BAD_REQUEST, 'Missing id or token');
 	}
 
-	const targetUser = await getAccount(body.token ? 'token' : 'id', body.token || body.id);
+	const targetUser = await getAccount(body.token ? 'token' : 'id', (body.token || body.id)!);
 
 	if (!targetUser) {
 		throw error(StatusCodes.NOT_FOUND, 'Target user does not exist');

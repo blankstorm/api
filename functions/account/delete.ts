@@ -24,7 +24,7 @@ export async function onRequest({ env, request }: RequestContext): Promise<Respo
 		await deleteAccount(target.id, body.reason);
 
 		return response(StatusCodes.OK);
-	} catch (e) {
+	} catch (e: any) {
 		if (e instanceof Response) {
 			return e;
 		}

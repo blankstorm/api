@@ -26,7 +26,7 @@ export async function onRequest({ env, request }: RequestContext): Promise<Respo
 
 		if (!body.multiple) {
 			checkParams(body, 'key', 'value');
-			const target = await getAccount(body.key, body.value);
+			const target = await getAccount(body.key!, body.value!);
 
 			await checkAuth({
 				auth: request,
@@ -52,12 +52,12 @@ export async function onRequest({ env, request }: RequestContext): Promise<Respo
 		}
 
 		checkParams(body, 'key', 'value');
-		const accounts = await getAccounts(body.key, body.value);
+		const accounts = await getAccounts(body.key!, body.value!);
 		return response(
 			StatusCodes.OK,
 			accounts.map(account => stripAccountInfo(account, body.access))
 		);
-	} catch (e) {
+	} catch (e: any) {
 		if (e instanceof Response) {
 			return e;
 		}

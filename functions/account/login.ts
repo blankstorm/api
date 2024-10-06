@@ -29,12 +29,12 @@ export async function onRequest({ env, request }: RequestContext): Promise<Respo
 		let token;
 		try {
 			token = await login(account.id);
-		} catch (err) {
+		} catch (err: any) {
 			return parseError(err);
 		}
 
 		return response(StatusCodes.OK, { ...stripAccountInfo(account), token });
-	} catch (e) {
+	} catch (e: any) {
 		if (e instanceof Response) {
 			return e;
 		}

@@ -14,12 +14,12 @@ export async function onRequest({ env, request }: RequestContext): Promise<Respo
 		let newUser: Account;
 		try {
 			newUser = await createAccount(body.username, body.email, body.password);
-		} catch (err) {
+		} catch (err: any) {
 			return parseError(err);
 		}
 
 		return response(StatusCodes.OK, newUser);
-	} catch (e) {
+	} catch (e: any) {
 		if (e instanceof Response) {
 			return e;
 		}

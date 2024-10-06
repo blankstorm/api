@@ -10,6 +10,6 @@
 		"noEmit": true,
 		"esModuleInterop": true,
 		"allowJs": true,
-		"strictFunctionTypes": true,
+		"strict": true,
 	},
 }

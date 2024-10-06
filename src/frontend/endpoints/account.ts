@@ -20,7 +20,7 @@ function parseAccount<A extends Account>(result: AccountResult): A {
 		created: new Date(result?.created),
 		is_disabled: result?.is_disabled,
 	};
-	for (const maybe of ['token', 'session', 'email']) {
+	for (const maybe of ['token', 'session', 'email'] as const) {
 		if (maybe in result) {
 			parsed[maybe] = result[maybe];
 		}
