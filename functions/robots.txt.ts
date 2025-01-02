@@ -1,7 +1,6 @@
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import type { RequestContext } from '../src/backend/context';
 
-export async function onRequest({ env }: RequestContext) {
+export async function onRequest() {
 	try {
 		return new Response('User-agent: *\nDisallow: /', {
 			status: StatusCodes.OK,
